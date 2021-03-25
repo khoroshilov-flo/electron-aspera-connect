@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Hello World!</title>
+<!--  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />-->
+</head>
+<body style="background: white;">
+<script src="https://d3gcli72yxqn2z.cloudfront.net/connect/v4/asperaweb-4.min.js"
+></script>
+<script type="text/javascript" src="https://d3gcli72yxqn2z.cloudfront.net/connect/v4/connectinstaller-4.min.js"></script>
+<script>
+  var CONNECT_INSTALLER =  "https://d3gcli72yxqn2z.cloudfront.net/connect/v4";
+  var initAsperaConnect  = function () {
+    this.asperaWeb = new AW4.Connect({
+      connectMethod: 'http'
+    });
+    var asperaInstaller = new AW4.ConnectInstaller({sdkLocation: CONNECT_INSTALLER});
+    var statusEventListener = function (eventType, data) {
+      if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.INITIALIZING) {
+        asperaInstaller.showLaunching();
+      } else if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.FAILED) {
+        asperaInstaller.showDownload();
+      } else if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.OUTDATED) {
+        asperaInstaller.showUpdate();
+      } else if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.RUNNING) {
+        asperaInstaller.connected();
+      }
+    };
+    asperaWeb.addEventListener(AW4.Connect.EVENT.STATUS, statusEventListener);
+    asperaWeb.initSession();
+  };
+  initAsperaConnect()
+</script>
+<script>
+  async function start() {
+    const result = await new Promise((rs, rj) => {
+      asperaWeb.showPreferences({
+        success: rs,
+        error: rj
+      })
+    })
+    console.log(result)
+  }
+</script>
+<h1>Hello World!</h1>
+<p>
+  <button onclick="start()">Start</button>
+</p>
+</body>
+</html>
